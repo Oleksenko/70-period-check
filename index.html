@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Перевірка Word файлу</title>
+
+<script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+
+<style>
+
+    body{
+        font-family: Arial, sans-serif;
+        background:#f4f6f9;
+        margin:0;
+        padding:40px;
+        color:#222;
+    }
+
+    .container{
+        max-width:900px;
+        margin:0 auto;
+        background:white;
+        padding:30px;
+        border-radius:14px;
+        box-shadow:0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    h1{
+        margin-top:0;
+        font-size:28px;
+    }
+
+    .upload-box{
+        border:2px dashed #bbb;
+        border-radius:12px;
+        padding:35px;
+        text-align:center;
+        background:#fafafa;
+        transition:0.2s;
+        cursor:pointer;
+    }
+
+    .upload-box.dragover{
+        border-color:#2563eb;
+        background:#eef4ff;
+    }
+
+    .upload-box:hover{
+        border-color:#2563eb;
+    }
+
+    input[type=file]{
+        display:none;
+    }
+
+    button{
+        margin-top:20px;
+        padding:12px 20px;
+        border:none;
+        border-radius:10px;
+        background:#2563eb;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+    }
+
+    button:hover{
+        background:#1d4ed8;
+    }
+
+    button:disabled{
+        background:#9ca3af;
+        cursor:not-allowed;
+    }
+
+    #result{
+        margin-top:30px;
+        white-space:pre-wrap;
+        line-height:1.5;
+    }
+
+    .success{
+        color:green;
+        font-weight:bold;
+    }
+
+    .error{
+        color:#dc2626;
+    }
+
+    .info{
+        color:#111827;
+        font-weight:bold;
+    }
+
+    #selectedFile{
+        margin-top:15px;
+        color:#374151;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📄 Перевірка Word файлу</h1>
+
+    <div class="upload-box" id="uploadBox">
+        <p>Перетягніть файл .docx сюди або натисніть</p>
+        <input type="file" id="fileInput" accept=".docx">
+    </div>
+
+    <div id="selectedFile"></div>
+
+    <button id="checkBtn">🔍 Перевірити файл</button>
+    <button id="copyBtn" disabled>📋 Копіювати помилки</button>
+
+    <div id="result"></div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
