@@ -103,6 +103,137 @@ function countDays(periodStr){
 
 }
 
+function splitDates(text){
+
+    return text
+        .split(/\n|\r|;/)
+        .map(x => x.trim())
+        .filter(x => x);
+
+}
+
+function calculateRangeDays(startStr, endStr){
+
+    const start = parseDate(startStr);
+    const end = parseDate(endStr);
+
+    return Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+}
+
+function detectTableType(cells){
+
+    const col4 = cells[3]?.innerText?.trim() || "";
+    const col5 = cells[4]?.innerText?.trim() || "";
+
+    // старий формат
+    if(col4.includes("-")){
+        return "old";
+    }
+
+    // новий формат
+    if(
+        /\d{2}\.\d{2}\.\d{4}/.test(col4) &&
+        /\d{2}\.\d{2}\.\d{4}/.test(col5)
+    ){
+        return "new";
+    }
+
+    return "unknown";
+
+}
+
+function checkNewFormat(cells, tableIndex, rowIndex, errors){
+
+    const startText =
+        cells[3]?.innerText?.trim() || "";
+
+    const endText =
+        cells[4]?.innerText?.trim() || "";
+
+    const daysText =
+        cells[5]?.innerText?.trim() || "";
+
+    if(!startText && !endText && !daysText){
+        return false;
+    }
+
+    if(startText && !endText){
+
+        errors.push(
+            `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказана дата завершення`
+        );
+
+        return false;
+
+    }
+
+    if(!startText && endText){
+
+        errors.push(
+            `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказана дата початку`
+        );
+
+        return false;
+
+    }
+
+    if(!daysText){
+
+        errors.push(
+            `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказана кількість днів`
+        );
+
+        return false;
+
+    }
+
+    if(!/^\d+$/.test(daysText)){
+
+        errors.push(
+            `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: невірний формат кількості днів`
+        );
+
+        return false;
+
+    }
+
+    const starts = splitDates(startText);
+    const ends = splitDates(endText);
+
+    if(starts.length !== ends.length){
+
+        errors.push(
+            `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: різна кількість дат початку і завершення`
+        );
+
+        return false;
+
+    }
+
+    let totalDays = 0;
+
+    for(let i = 0; i < starts.length; i++){
+
+        totalDays += calculateRangeDays(starts[i], ends[i]);
+
+    }
+
+    const expected = Number(daysText);
+
+    if(totalDays !== expected){
+
+        errors.push(
+            `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: ` +
+            `вказано ${expected}, обчислено ${totalDays}`
+        );
+
+    }
+
+    return true;
+
+}
+
 function extractTablesFromHtml(html){
 
     const parser = new DOMParser();
@@ -136,7 +267,7 @@ function checkTables(tables){
 
         rows.forEach((row, rowIndex) => {
 
-            if(rowIndex === 0){
+            if(rowIndex < 2){
                 return;
             }
 
@@ -156,47 +287,86 @@ function checkTables(tables){
 
             }
 
-            const datesText =
-                cells[3]?.innerText?.trim() || "";
+            const tableType = detectTableType(cells);
 
-            const daysText =
-                cells[4]?.innerText?.trim() || "";
-
-            if(!datesText && !daysText){
+            if(tableType === "unknown"){
+            
                 return;
+            
             }
             
-            if(datesText && !daysText){
+            if(tableType === "old"){
             
-                errors.push(
-                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказана кількість днів`
+                const datesText =
+                    cells[3]?.innerText?.trim() || "";
+            
+                const daysText =
+                    cells[4]?.innerText?.trim() || "";
+            
+                if(!datesText && !daysText){
+                    return;
+                }
+            
+                if(datesText && !daysText){
+            
+                    errors.push(
+                        `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказана кількість днів`
+                    );
+            
+                    return;
+            
+                }
+            
+                if(!datesText && daysText){
+            
+                    errors.push(
+                        `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказані дати`
+                    );
+            
+                    return;
+            
+                }
+            
+                if(!/^\d+$/.test(daysText)){
+            
+                    errors.push(
+                        `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: невірний формат кількості днів`
+                    );
+            
+                    return;
+            
+                }
+            
+                checkedRows++;
+            
+                const calculatedDays = countDays(datesText);
+            
+                const expectedDays = Number(daysText);
+            
+                if(calculatedDays !== expectedDays){
+            
+                    errors.push(
+                        `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: ` +
+                        `вказано ${expectedDays}, ` +
+                        `обчислено ${calculatedDays}`
+                    );
+            
+                }
+            
+            }
+            
+            if(tableType === "new"){
+            
+                checkedRows++;
+            
+                checkNewFormat(
+                    cells,
+                    tableIndex,
+                    rowIndex,
+                    errors
                 );
             
-                return;
-            
             }
-            
-            if(!datesText && daysText){
-            
-                errors.push(
-                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказані дати`
-                );
-            
-                return;
-            
-            }
-
-            if(!/^\d+$/.test(daysText)){
-
-                errors.push(
-                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: невірний формат кількості днів "${daysText}"`
-                );
-            
-                return;
-            
-            }
-
-            checkedRows++;
 
             const calculatedDays = countDays(datesText);
 
