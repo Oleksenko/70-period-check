@@ -127,18 +127,29 @@ function detectTableType(cells){
 
     const col4 = cells[3]?.innerText?.trim() || "";
     const col5 = cells[4]?.innerText?.trim() || "";
+    const col6 = cells[5]?.innerText?.trim() || "";
 
-    // старий формат
-    if(col4.includes("-")){
-        return "old";
-    }
+    const hasDateInCol4 =
+        /\d{2}\.\d{2}\.\d{4}/.test(col4);
 
-    // новий формат
+    const hasDateInCol5 =
+        /\d{2}\.\d{2}\.\d{4}/.test(col5);
+
     if(
-        /\d{2}\.\d{2}\.\d{4}/.test(col4) &&
-        /\d{2}\.\d{2}\.\d{4}/.test(col5)
+        hasDateInCol4 &&
+        hasDateInCol5
     ){
         return "new";
+    }
+
+    if(
+        (col4.includes("-") || hasDateInCol4) &&
+        (
+            /^\d+$/.test(col5) ||
+            col5 === ""
+        )
+    ){
+        return "old";
     }
 
     return "unknown";
@@ -246,6 +257,42 @@ function extractTablesFromHtml(html){
 
 }
 
+function isHeaderRow(rowText){
+
+    const normalized = rowText
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const headerPatterns = [
+        "період",
+        "кількість днів",
+        "з/п",
+        "прізвище",
+        "військове звання",
+        "особовий номер",
+        "підстава"
+    ];
+
+    for(const pattern of headerPatterns){
+
+        if(normalized.includes(pattern)){
+            return true;
+        }
+
+    }
+
+    if(
+        normalized === "з по" ||
+        normalized === "з  по"
+    ){
+        return true;
+    }
+
+    return false;
+
+}
+
 function checkTables(tables){
 
     const errors = [];
@@ -271,19 +318,12 @@ function checkTables(tables){
 
             const cells = row.querySelectorAll("td");
 
-            const rowText = row.innerText.toLowerCase();
-            
-            if(
-                rowText.includes("період") ||
-                rowText.includes("кількість днів") ||
-                rowText.includes("з/п") ||
-                rowText.includes("прізвище") ||
-                rowText === "з по" ||
-                rowText === "з  по"
-            ){
+            const rowText = row.innerText;
+
+            if(isHeaderRow(rowText)){
                 return;
             }
-
+            
             if(cells.length === 0){
                 return;
             }
