@@ -136,6 +136,10 @@ function checkTables(tables){
 
         rows.forEach((row, rowIndex) => {
 
+            if(rowIndex === 0){
+                return;
+            }
+
             const cells = row.querySelectorAll("td");
 
             if(cells.length === 0){
@@ -158,12 +162,38 @@ function checkTables(tables){
             const daysText =
                 cells[4]?.innerText?.trim() || "";
 
-            if(!datesText || !daysText){
+            if(!datesText && !daysText){
                 return;
+            }
+            
+            if(datesText && !daysText){
+            
+                errors.push(
+                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказана кількість днів`
+                );
+            
+                return;
+            
+            }
+            
+            if(!datesText && daysText){
+            
+                errors.push(
+                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: не вказані дати`
+                );
+            
+                return;
+            
             }
 
             if(!/^\d+$/.test(daysText)){
+
+                errors.push(
+                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: невірний формат кількості днів "${daysText}"`
+                );
+            
                 return;
+            
             }
 
             checkedRows++;
