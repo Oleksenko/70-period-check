@@ -269,10 +269,6 @@ function checkTables(tables){
 
         rows.forEach((row, rowIndex) => {
 
-            if(rowIndex === 0){
-                return;
-            }
-
             const cells = row.querySelectorAll("td");
 
             if(cells.length === 0){
@@ -281,12 +277,23 @@ function checkTables(tables){
 
             if(cells.length < 5){
 
+                const rowText = row.innerText.toLowerCase();
+            
+                if(
+                    rowText.includes("з") ||
+                    rowText.includes("по") ||
+                    rowText.includes("період") ||
+                    rowText.includes("кількість днів")
+                ){
+                    return;
+                }
+            
                 errors.push(
                     `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: недостатньо колонок`
                 );
-
+            
                 return;
-
+            
             }
 
             const tableType = detectTableType(cells);
