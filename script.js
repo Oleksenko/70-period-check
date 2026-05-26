@@ -354,21 +354,6 @@ function checkTables(tables){
             
             }
 
-            const calculatedDays = countDays(datesText);
-
-            const expectedDays = Number(daysText);
-
-            if(calculatedDays !== expectedDays){
-
-                errors.push(
-                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: ` +
-                    `періоди "${datesText}", ` +
-                    `вказано ${expectedDays}, ` +
-                    `обчислено ${calculatedDays}`
-                );
-
-            }
-
         });
 
     });
