@@ -269,7 +269,7 @@ function checkTables(tables){
 
         rows.forEach((row, rowIndex) => {
 
-            if(rowIndex < 2){
+            if(rowIndex === 0){
                 return;
             }
 
@@ -292,6 +292,21 @@ function checkTables(tables){
             const tableType = detectTableType(cells);
 
             if(tableType === "unknown"){
+
+                const hasAnyData =
+                    cells[0]?.innerText?.trim() ||
+                    cells[1]?.innerText?.trim() ||
+                    cells[2]?.innerText?.trim() ||
+                    cells[3]?.innerText?.trim() ||
+                    cells[4]?.innerText?.trim();
+            
+                if(hasAnyData){
+            
+                    errors.push(
+                        `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: неможливо визначити формат рядка`
+                    );
+            
+                }
             
                 return;
             
