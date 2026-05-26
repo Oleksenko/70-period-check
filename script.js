@@ -105,19 +105,21 @@ function countDays(periodStr){
 
 function splitDates(text){
 
-    return text
-        .split(/\n|\r|;/)
-        .map(x => x.trim())
-        .filter(x => x);
+    const matches = text.match(/\d{2}\.\d{2}\.\d{4}/g);
+
+    return matches || [];
 
 }
 
 function calculateRangeDays(startStr, endStr){
 
-    const start = parseDate(startStr);
-    const end = parseDate(endStr);
+    const [sd, sm, sy] = startStr.split(".").map(Number);
+    const [ed, em, ey] = endStr.split(".").map(Number);
 
-    return Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    const start = Date.UTC(sy, sm - 1, sd);
+    const end = Date.UTC(ey, em - 1, ed);
+
+    return Math.floor((end - start) / 86400000) + 1;
 
 }
 
