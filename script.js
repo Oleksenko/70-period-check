@@ -339,20 +339,6 @@ function checkTables(tables){
             
                 checkedRows++;
             
-                const calculatedDays = countDays(datesText);
-            
-                const expectedDays = Number(daysText);
-            
-                if(calculatedDays !== expectedDays){
-            
-                    errors.push(
-                        `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: ` +
-                        `вказано ${expectedDays}, ` +
-                        `обчислено ${calculatedDays}`
-                    );
-            
-                }
-            
             }
             
             if(tableType === "new"){
