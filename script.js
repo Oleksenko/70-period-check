@@ -163,13 +163,7 @@ function checkTables(tables){
             }
 
             if(!/^\d+$/.test(daysText)){
-
-                errors.push(
-                    `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: невірний формат кількості днів "${daysText}"`
-                );
-
                 return;
-
             }
 
             checkedRows++;
