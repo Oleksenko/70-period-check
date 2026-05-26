@@ -262,6 +262,7 @@ function isHeaderRow(rowText){
     const normalized = rowText
         .toLowerCase()
         .replace(/\s+/g, " ")
+        .replace(/[^\wа-яіїєґ ]/gi, "")
         .trim();
 
     const headerPatterns = [
@@ -282,9 +283,11 @@ function isHeaderRow(rowText){
 
     }
 
+    const compact = normalized.replace(/\s+/g, "");
+
     if(
-        normalized === "з по" ||
-        normalized === "з  по"
+        compact === "зпо" ||
+        compact === "запо"
     ){
         return true;
     }
