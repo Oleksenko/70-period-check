@@ -271,22 +271,22 @@ function checkTables(tables){
 
             const cells = row.querySelectorAll("td");
 
+            const rowText = row.innerText.toLowerCase();
+            
+            if(
+                rowText.includes("період") ||
+                rowText.includes("кількість днів") ||
+                rowText.includes("з/п") ||
+                rowText.includes("прізвище")
+            ){
+                return;
+            }
+
             if(cells.length === 0){
                 return;
             }
 
             if(cells.length < 5){
-
-                const rowText = row.innerText.toLowerCase();
-            
-                if(
-                    rowText.includes("з") ||
-                    rowText.includes("по") ||
-                    rowText.includes("період") ||
-                    rowText.includes("кількість днів")
-                ){
-                    return;
-                }
             
                 errors.push(
                     `❌ Таблиця ${tableIndex + 1}, рядок ${rowIndex + 1}: недостатньо колонок`
