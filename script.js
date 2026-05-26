@@ -277,7 +277,9 @@ function checkTables(tables){
                 rowText.includes("період") ||
                 rowText.includes("кількість днів") ||
                 rowText.includes("з/п") ||
-                rowText.includes("прізвище")
+                rowText.includes("прізвище") ||
+                rowText === "з по" ||
+                rowText === "з  по"
             ){
                 return;
             }
