@@ -339,10 +339,6 @@ function checkTables(tables){
             const rowText = row.innerText;
 
             const personName = getPersonName(cells);
-
-            if(isHeaderRow(rowText)){
-                return;
-            }
             
             if(cells.length === 0){
                 return;
