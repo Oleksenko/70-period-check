@@ -58,13 +58,13 @@ uploadBox.addEventListener("drop", (e) => {
 
 });
 
-function parseDate(dateStr){
+// function parseDate(dateStr){
 
-    const [day, month, year] = dateStr.split(".");
+//     const [day, month, year] = dateStr.split(".");
 
-    return new Date(year, month - 1, day);
+//     return new Date(year, month - 1, day);
 
-}
+// }
 
 function countDays(periodStr){
 
@@ -83,11 +83,8 @@ function countDays(periodStr){
 
     while((match = rangeRegex.exec(cleaned)) !== null){
 
-        const start = parseDate(match[1]);
-        const end = parseDate(match[2]);
-
         const diffDays =
-            Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+            calculateRangeDays(match[1], match[2]);
 
         totalDays += diffDays;
 
