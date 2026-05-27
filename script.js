@@ -339,16 +339,16 @@ function checkTables(tables){
             const rowText = row.innerText;
 
             const personName = getPersonName(cells);
+
+            if(isHeaderRow(rowText)){
+                return;
+            }
             
             if(cells.length === 0){
                 return;
             }
 
             if(cells.length < 5){
-
-                if(isHeaderRow(rowText)){
-                    return;
-                }
             
                 const hasDates =
                     /\d{2}\.\d{2}\.\d{4}/.test(rowText);
