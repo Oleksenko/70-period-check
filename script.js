@@ -349,6 +349,17 @@ function checkTables(tables){
             }
 
             if(cells.length < 5){
+
+                if(isHeaderRow(rowText)){
+                    return;
+                }
+            
+                const hasDates =
+                    /\d{2}\.\d{2}\.\d{4}/.test(rowText);
+            
+                if(!hasDates){
+                    return;
+                }
             
                 errors.push(
                     `❌ Таблиця ${tableIndex + 1}, ${personName}: недостатньо колонок`
